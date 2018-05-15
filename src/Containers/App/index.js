@@ -1,18 +1,34 @@
 import React from 'react'
-import { Switch } from 'react-router-dom'
+import {withRouter} from 'react-router-dom'
+import {connect} from 'react-redux'
 
-import RouteLayout from '../../Commons/Routes/RouteLayout'
-import Clean from '../../Commons/Layouts/Clean'
-import Main from '../../Commons/Layouts/Main'
+import AuthAction from '../../Actions/AuthAction'
+import Header from '../Header'
+import Main from '../Main'
+import Notification from '../../Components/Notification'
+
+import './app.scss'
 
 const App = () => {
-    return (
-        <Switch>
-            <RouteLayout exact path='/' layout={Clean} component={() => <div>home</div>} />
-            <RouteLayout exact path='/user/settings' layout={Main} render={() => <div>User Settings</div>} />
-            <RouteLayout exact path='/user/profile' layout={Main} render={() => <div>User Profile</div>} />
-        </Switch>
-    )
+  // load user data if token is defined
+
+  try {
+    const action = new AuthAction()
+    action.getUser()
+  } catch(e) {
+    console.log('Error no home : ')
+    console.error(e)
+  }
+
+  return (
+    <div className='app'>
+      <Notification />
+      <Header />
+      <Main />
+    </div>
+  )
 }
 
-export default App
+// when use connected redux components that wrappes route
+// you must use withRouter
+export default withRouter(connect()(App))
